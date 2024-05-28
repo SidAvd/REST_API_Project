@@ -7,6 +7,7 @@ namespace REST_API_Project.Models
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
+        public DateOnly? HireDate { get; set; }
         public ICollection<Errand>? Errands { get; set; }
     }
 }
