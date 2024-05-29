@@ -38,7 +38,7 @@ namespace REST_API_Project.Controllers
             {
                 return NotFound();
             }
-
+            errand.ErrandWorkers = _context.ErrandWorkers.Where(errandWorker => errandWorker.ErrandId == id).ToList();
             return errand;
         }
 
@@ -81,7 +81,7 @@ namespace REST_API_Project.Controllers
             _context.Errands.Add(errand);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetErrand", new { id = errand.Id }, errand);
+            return CreatedAtAction(nameof(GetErrand), new { id = errand.Id }, errand);
         }
 
         // DELETE: api/Errands/5

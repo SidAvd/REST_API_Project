@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using REST_API_Project.Data;
+using System.Text.Json.Serialization;
 
 namespace REST_API_Project
 {
@@ -19,6 +20,12 @@ namespace REST_API_Project
             // Adding the Database to the App
             var connectionString = builder.Configuration.GetConnectionString("ApiDbConnectionString");
             builder.Services.AddDbContext<ApiDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+            // To ignore cycles when using JSON (many-to-many relationship)
+            builder.Services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
             var app = builder.Build();
 

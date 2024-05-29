@@ -22,21 +22,6 @@ namespace REST_API_Project.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("ErrandWorker", b =>
-                {
-                    b.Property<int>("ErrandsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorkersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ErrandsId", "WorkersId");
-
-                    b.HasIndex("WorkersId");
-
-                    b.ToTable("WorkerErrand", (string)null);
-                });
-
             modelBuilder.Entity("REST_API_Project.Models.Errand", b =>
                 {
                     b.Property<int>("Id")
@@ -52,11 +37,27 @@ namespace REST_API_Project.Migrations
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.ToTable("Errands");
+                });
+
+            modelBuilder.Entity("REST_API_Project.Models.ErrandWorker", b =>
+                {
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ErrandId")
+                        .HasColumnType("int");
+
+                    b.HasKey("WorkerId", "ErrandId");
+
+                    b.HasIndex("ErrandId");
+
+                    b.ToTable("ErrandWorkers");
                 });
 
             modelBuilder.Entity("REST_API_Project.Models.Worker", b =>
@@ -79,19 +80,33 @@ namespace REST_API_Project.Migrations
                     b.ToTable("Workers");
                 });
 
-            modelBuilder.Entity("ErrandWorker", b =>
+            modelBuilder.Entity("REST_API_Project.Models.ErrandWorker", b =>
                 {
-                    b.HasOne("REST_API_Project.Models.Errand", null)
-                        .WithMany()
-                        .HasForeignKey("ErrandsId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("REST_API_Project.Models.Errand", "Errand")
+                        .WithMany("ErrandWorkers")
+                        .HasForeignKey("ErrandId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("REST_API_Project.Models.Worker", null)
-                        .WithMany()
-                        .HasForeignKey("WorkersId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("REST_API_Project.Models.Worker", "Worker")
+                        .WithMany("ErrandWorkers")
+                        .HasForeignKey("WorkerId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.Navigation("Errand");
+
+                    b.Navigation("Worker");
+                });
+
+            modelBuilder.Entity("REST_API_Project.Models.Errand", b =>
+                {
+                    b.Navigation("ErrandWorkers");
+                });
+
+            modelBuilder.Entity("REST_API_Project.Models.Worker", b =>
+                {
+                    b.Navigation("ErrandWorkers");
                 });
 #pragma warning restore 612, 618
         }

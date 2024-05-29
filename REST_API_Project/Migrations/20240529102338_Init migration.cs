@@ -21,7 +21,7 @@ namespace REST_API_Project.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: true)
+                    Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsCompleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     Description = table.Column<string>(type: "longtext", nullable: true)
@@ -50,41 +50,39 @@ namespace REST_API_Project.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "WorkerErrand",
+                name: "ErrandWorkers",
                 columns: table => new
                 {
-                    ErrandsId = table.Column<int>(type: "int", nullable: false),
-                    WorkersId = table.Column<int>(type: "int", nullable: false)
+                    ErrandId = table.Column<int>(type: "int", nullable: false),
+                    WorkerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkerErrand", x => new { x.ErrandsId, x.WorkersId });
+                    table.PrimaryKey("PK_ErrandWorkers", x => new { x.WorkerId, x.ErrandId });
                     table.ForeignKey(
-                        name: "FK_WorkerErrand_Errands_ErrandsId",
-                        column: x => x.ErrandsId,
+                        name: "FK_ErrandWorkers_Errands_ErrandId",
+                        column: x => x.ErrandId,
                         principalTable: "Errands",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_WorkerErrand_Workers_WorkersId",
-                        column: x => x.WorkersId,
+                        name: "FK_ErrandWorkers_Workers_WorkerId",
+                        column: x => x.WorkerId,
                         principalTable: "Workers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkerErrand_WorkersId",
-                table: "WorkerErrand",
-                column: "WorkersId");
+                name: "IX_ErrandWorkers_ErrandId",
+                table: "ErrandWorkers",
+                column: "ErrandId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "WorkerErrand");
+                name: "ErrandWorkers");
 
             migrationBuilder.DropTable(
                 name: "Errands");
