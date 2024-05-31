@@ -23,14 +23,16 @@ namespace REST_API_Project.Controllers
 
         // GET: api/Errands
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Errand>>> GetErrands()
+        public async Task<ActionResult<IEnumerable<ErrandDTO>>> GetErrands()
         {
-            return await _context.Errands.ToListAsync();
+            return await _context.Errands
+                .Select(errand => ErrandToDTO(errand))
+                .ToListAsync();
         }
 
         // GET: api/Errands/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Errand>> GetErrand(int id)
+        public async Task<ActionResult<ErrandDTO>> GetErrand(int id)
         {
             var errand = await _context.Errands.FindAsync(id);
 
@@ -38,21 +40,29 @@ namespace REST_API_Project.Controllers
             {
                 return NotFound();
             }
-            errand.ErrandWorkers = _context.ErrandWorkers.Where(errandWorker => errandWorker.ErrandId == id).ToList();
-            return errand;
+
+            return ErrandToDTO(errand);
         }
 
         // PUT: api/Errands/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutErrand(int id, Errand errand)
+        public async Task<IActionResult> PutErrand(int id, ErrandDTO errandDTO)
         {
-            if (id != errand.Id)
+            if (id != errandDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(errand).State = EntityState.Modified;
+            var errand = await _context.Errands.FindAsync(id);
+            if (errand == null)
+            {
+                return NotFound();
+            }
+
+            errand.Name = errandDTO.Name;
+            errand.IsCompleted = errandDTO.IsCompleted;
+            errand.Description = errandDTO.Description;
 
             try
             {
@@ -76,12 +86,21 @@ namespace REST_API_Project.Controllers
         // POST: api/Errands
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Errand>> PostErrand(Errand errand)
+        public async Task<ActionResult<ErrandDTO>> PostErrand(ErrandDTO errandDTO)
         {
+            Errand errand = new()
+            {
+                Name = errandDTO.Name,
+                IsCompleted = errandDTO.IsCompleted,
+                Description = errandDTO.Description
+            };
+
             _context.Errands.Add(errand);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetErrand), new { id = errand.Id }, errand);
+            return CreatedAtAction(nameof(GetErrand),
+                new { id = errand.Id },
+                ErrandToDTO(errand));
         }
 
         // DELETE: api/Errands/5
@@ -104,5 +123,13 @@ namespace REST_API_Project.Controllers
         {
             return _context.Errands.Any(e => e.Id == id);
         }
+
+        private static ErrandDTO ErrandToDTO(Errand errand) => new()
+        {
+            Id = errand.Id,
+            Name = errand.Name,
+            IsCompleted = errand.IsCompleted,
+            Description = errand.Description
+        };
     }
 }

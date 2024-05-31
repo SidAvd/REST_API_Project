@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using REST_API_Project.Models;
+using System.Security.Claims;
 
 namespace REST_API_Project.Data
 {
@@ -13,23 +14,24 @@ namespace REST_API_Project.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Creating many-to-many relationship, Join Table WorkerErrand
-            /*modelBuilder.Entity<Worker>().HasMany(x => x.Errands).WithMany(x => x.Workers).UsingEntity(j => j.ToTable("WorkerErrand"));*/
-
+            
             // Database and Tables configuration
+            // Worker Table
             modelBuilder.Entity<Worker>(entity =>
             {
                 entity.HasKey(worker => worker.Id);
                 entity.Property(worker => worker.Name).IsRequired();
+                entity.Property(worker => worker.Age).HasPrecision(3, 0);
             });
-
+            // Errand Table
             modelBuilder.Entity<Errand>(entity =>
             {
                 entity.HasKey(errand => errand.Id);
                 entity.Property(errand => errand.Name).IsRequired();
                 entity.Property(errand => errand.IsCompleted).IsRequired();
+                entity.Property(errand => errand.DifficultyLevel).HasPrecision(1, 0);
             });
-
+            // Join Table ErrandWorker, many-to-many relationship
             modelBuilder.Entity<ErrandWorker>(entity =>
             {
                 entity.HasKey(errandWorker => new { errandWorker.WorkerId, errandWorker.ErrandId });
@@ -45,5 +47,6 @@ namespace REST_API_Project.Data
                     .OnDelete(DeleteBehavior.NoAction);
             });
         }
+        public DbSet<REST_API_Project.Models.WorkerDTO> WorkerDTO { get; set; } = default!;
     }
 }

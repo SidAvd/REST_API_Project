@@ -12,7 +12,7 @@ using REST_API_Project.Data;
 namespace REST_API_Project.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20240529102338_Init migration")]
+    [Migration("20240531131725_Init migration")]
     partial class Initmigration
     {
         /// <inheritdoc />
@@ -35,6 +35,10 @@ namespace REST_API_Project.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
+
+                    b.Property<int?>("DifficultyLevel")
+                        .HasPrecision(1)
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
@@ -70,6 +74,10 @@ namespace REST_API_Project.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Age")
+                        .HasPrecision(3)
+                        .HasColumnType("int");
 
                     b.Property<DateOnly?>("HireDate")
                         .HasColumnType("date");

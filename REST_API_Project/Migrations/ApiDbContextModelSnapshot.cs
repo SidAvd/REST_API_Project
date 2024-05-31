@@ -33,6 +33,10 @@ namespace REST_API_Project.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("DifficultyLevel")
+                        .HasPrecision(1)
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("tinyint(1)");
 
@@ -67,6 +71,10 @@ namespace REST_API_Project.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("Age")
+                        .HasPrecision(3)
+                        .HasColumnType("int");
 
                     b.Property<DateOnly?>("HireDate")
                         .HasColumnType("date");

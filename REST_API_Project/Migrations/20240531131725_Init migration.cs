@@ -24,6 +24,7 @@ namespace REST_API_Project.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     IsCompleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    DifficultyLevel = table.Column<int>(type: "int", precision: 1, scale: 0, nullable: true),
                     Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
@@ -41,6 +42,7 @@ namespace REST_API_Project.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Age = table.Column<int>(type: "int", precision: 3, scale: 0, nullable: true),
                     HireDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>

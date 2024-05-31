@@ -23,14 +23,16 @@ namespace REST_API_Project.Controllers
 
         // GET: api/Workers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Worker>>> GetWorkers()
+        public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetWorkers()
         {
-            return await _context.Workers.ToListAsync();
+            return await _context.Workers
+                .Select(worker => WorkerToDTO(worker))
+                .ToListAsync();
         }
 
         // GET: api/Workers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Worker>> GetWorker(int id)
+        public async Task<ActionResult<WorkerDTO>> GetWorker(int id)
         {
             var worker = await _context.Workers.FindAsync(id);
 
@@ -39,20 +41,27 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
-            return worker;
+            return WorkerToDTO(worker);
         }
 
         // PUT: api/Workers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutWorker(int id, Worker worker)
+        public async Task<IActionResult> PutWorker(int id, WorkerDTO workerDTO)
         {
-            if (id != worker.Id)
+            if (id != workerDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(worker).State = EntityState.Modified;
+            var worker = await _context.Workers.FindAsync(id);
+            if (worker == null) 
+            {
+                return NotFound();
+            }
+
+            worker.Name = workerDTO.Name;
+            worker.HireDate = workerDTO.HireDate;
 
             try
             {
@@ -76,12 +85,20 @@ namespace REST_API_Project.Controllers
         // POST: api/Workers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Worker>> PostWorker(Worker worker)
+        public async Task<ActionResult<WorkerDTO>> PostWorker(WorkerDTO workerDTO)
         {
+            Worker worker = new()
+            {
+                Name = workerDTO.Name,
+                HireDate = workerDTO.HireDate
+            };
+
             _context.Workers.Add(worker);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetWorker", new { id = worker.Id }, worker);
+            return CreatedAtAction(nameof(GetWorker), 
+                new { id = worker.Id },
+                WorkerToDTO(worker));
         }
 
         // DELETE: api/Workers/5
@@ -104,5 +121,12 @@ namespace REST_API_Project.Controllers
         {
             return _context.Workers.Any(e => e.Id == id);
         }
+
+        private static WorkerDTO WorkerToDTO(Worker worker) => new()
+        {
+            Id = worker.Id,
+            Name = worker.Name,
+            HireDate = worker.HireDate
+        };
     }
 }
