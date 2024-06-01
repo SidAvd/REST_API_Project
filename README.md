@@ -16,12 +16,21 @@ first two tables have, meaning which workers run which errands. The user can cre
 ask from the DB all the Workers:
 ![workers actions](<REST_API_Project/Images/WorkersActions.png>)
 
+Action example, posting a Worker:
+![posting a worker](<REST_API_Project/Images/PostingAWorker.png>)
+
 The same actions can be done for the Errands table:
 ![errands actions](<REST_API_Project/Images/ErrandsActions.png>)
+
+Action example, posting an Errand:
+![posting an errand](<REST_API_Project/Images/PostingAnErrand.png>)
 
 The user also can create relations between a Worker and an Errand by adding their respective ids to the third DB table (Join Table).
 The user can ask all or a specified relationship and can delete a relationship between a worker and an errand from the DB:
 ![errands actions](<REST_API_Project/Images/ErrandWorkersActions.png>)
+
+Action example, getting a specified WorkerErrand:
+![getting an errand worker](<REST_API_Project/Images/GettingAnErrandWorker.png>)
 
 ## Technical Information
 The project contains all the logic of an API that manages a DB. This means that it uses Models (classes) that corespond to the tables
