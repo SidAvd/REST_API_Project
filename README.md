@@ -13,6 +13,7 @@ Whith the API running the user utilizing the endpoints accordingly (with Postman
 
 In the DB there are three tables: Workers, Errands and the Join Table that coresponds to the many-to-many relationship that the
 first two tables have, meaning which workers run which errands:
+
 ![database](<REST_API_Project/Images/Database.png>)
 
 The user can create, delete and update a Worker and can also
