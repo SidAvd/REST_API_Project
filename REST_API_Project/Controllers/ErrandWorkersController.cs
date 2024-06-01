@@ -23,69 +23,50 @@ namespace REST_API_Project.Controllers
 
         // GET: api/ErrandWorkers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ErrandWorker>>> GetErrandWorkers()
+        public async Task<ActionResult<IEnumerable<ErrandWorkerDTO>>> GetErrandWorkers()
         {
-            return await _context.ErrandWorkers.ToListAsync();
+            return await _context.ErrandWorkers.Select(ew => ErrandWorker_To_ErrandWorkerDTO(ew)).ToListAsync();
         }
 
         // GET: api/ErrandWorkers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ErrandWorker>> GetErrandWorker(int id)
+        [HttpGet("{errandid}&{workerid}")]
+        public async Task<ActionResult<ErrandWorkerDTO>> GetErrandWorker(int errandid, int workerid)
         {
-            var errandWorker = await _context.ErrandWorkers.FindAsync(id);
+            var errandWorker = await _context.ErrandWorkers
+                .Where(ew => ew.WorkerId == workerid && ew.ErrandId == errandid)
+                .SingleOrDefaultAsync();
 
             if (errandWorker == null)
             {
                 return NotFound();
             }
 
-            return errandWorker;
-        }
-
-        // PUT: api/ErrandWorkers/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutErrandWorker(int id, ErrandWorker errandWorker)
-        {
-            if (id != errandWorker.WorkerId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(errandWorker).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ErrandWorkerExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            return ErrandWorker_To_ErrandWorkerDTO(errandWorker);
         }
 
         // POST: api/ErrandWorkers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ErrandWorker>> PostErrandWorker(ErrandWorker errandWorker)
+        public async Task<ActionResult<ErrandWorker>> PostErrandWorker(ErrandWorkerDTO errandWorkerDTO)
         {
-            _context.ErrandWorkers.Add(errandWorker);
+
+            // If the chosen worker doesn't exist or the chosen errand doesn't exist, BadRequest is returned
+            if (!_context.Workers.Any(w => w.Id == errandWorkerDTO.WorkerId) 
+                || !_context.Errands.Any(e => e.Id == errandWorkerDTO.ErrandId))
+            {
+                return BadRequest();
+            }
+
+            // ErrandWorkerDTO to ErrandWorker
+            _context.ErrandWorkers.Add(ErrandWorkerDTO_To_ErrandWorker(errandWorkerDTO));
+
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (ErrandWorkerExists(errandWorker.WorkerId))
+                if (ErrandWorkerExists(errandWorkerDTO))
                 {
                     return Conflict();
                 }
@@ -95,14 +76,19 @@ namespace REST_API_Project.Controllers
                 }
             }
 
-            return CreatedAtAction("GetErrandWorker", new { id = errandWorker.WorkerId }, errandWorker);
+            return CreatedAtAction(nameof(GetErrandWorker),
+                new { errandId = errandWorkerDTO.ErrandId, workerId = errandWorkerDTO.WorkerId },
+                errandWorkerDTO);
         }
 
-        // DELETE: api/ErrandWorkers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteErrandWorker(int id)
+        // DELETE: api/ErrandWorkers/5&4
+        [HttpDelete("{errandid}&{workerid}")]
+        public async Task<IActionResult> DeleteErrandWorker(int errandid, int workerid)
         {
-            var errandWorker = await _context.ErrandWorkers.FindAsync(id);
+            var errandWorker = await _context.ErrandWorkers
+                .Where(ew => ew.WorkerId == workerid && ew.ErrandId == errandid)
+                .SingleOrDefaultAsync();
+
             if (errandWorker == null)
             {
                 return NotFound();
@@ -114,9 +100,21 @@ namespace REST_API_Project.Controllers
             return NoContent();
         }
 
-        private bool ErrandWorkerExists(int id)
+        private bool ErrandWorkerExists(ErrandWorkerDTO errandWorkerDTO)
         {
-            return _context.ErrandWorkers.Any(e => e.WorkerId == id);
+            return _context.ErrandWorkers.Any(ew => ew.ErrandId == errandWorkerDTO.ErrandId && ew.WorkerId == errandWorkerDTO.WorkerId);
         }
+
+        private static ErrandWorker ErrandWorkerDTO_To_ErrandWorker(ErrandWorkerDTO errandWorkerDTO) => new()
+        {
+            ErrandId = errandWorkerDTO.ErrandId,
+            WorkerId = errandWorkerDTO.WorkerId
+        };
+
+        private static ErrandWorkerDTO ErrandWorker_To_ErrandWorkerDTO(ErrandWorker errandWorker) => new()
+        {
+            ErrandId = errandWorker.ErrandId,
+            WorkerId = errandWorker.WorkerId
+        };
     }
 }

@@ -26,7 +26,7 @@ namespace REST_API_Project.Controllers
         public async Task<ActionResult<IEnumerable<ErrandDTO>>> GetErrands()
         {
             return await _context.Errands
-                .Select(errand => ErrandToDTO(errand))
+                .Select(errand => Errand_To_ErrandDTO(errand))
                 .ToListAsync();
         }
 
@@ -41,7 +41,7 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
-            return ErrandToDTO(errand);
+            return Errand_To_ErrandDTO(errand);
         }
 
         // PUT: api/Errands/5
@@ -88,19 +88,14 @@ namespace REST_API_Project.Controllers
         [HttpPost]
         public async Task<ActionResult<ErrandDTO>> PostErrand(ErrandDTO errandDTO)
         {
-            Errand errand = new()
-            {
-                Name = errandDTO.Name,
-                IsCompleted = errandDTO.IsCompleted,
-                Description = errandDTO.Description
-            };
+            var errand = ErrandDTO_To_Errand(errandDTO);
 
             _context.Errands.Add(errand);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetErrand),
                 new { id = errand.Id },
-                ErrandToDTO(errand));
+                Errand_To_ErrandDTO(errand));           // Use of method -> shows id created from DB
         }
 
         // DELETE: api/Errands/5
@@ -124,12 +119,20 @@ namespace REST_API_Project.Controllers
             return _context.Errands.Any(e => e.Id == id);
         }
 
-        private static ErrandDTO ErrandToDTO(Errand errand) => new()
+        private static ErrandDTO Errand_To_ErrandDTO(Errand errand) => new()
         {
             Id = errand.Id,
             Name = errand.Name,
             IsCompleted = errand.IsCompleted,
             Description = errand.Description
+        };
+
+        private static Errand ErrandDTO_To_Errand(ErrandDTO errandDTO) => new()
+        {
+            Id = errandDTO.Id,
+            Name = errandDTO.Name,
+            IsCompleted = errandDTO.IsCompleted,
+            Description = errandDTO.Description
         };
     }
 }
