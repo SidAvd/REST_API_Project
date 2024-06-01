@@ -13,8 +13,15 @@ Whith the API running the user utilizing the endpoints accordingly (with Postman
 
 In the DB there are three tables: Workers, Errands and the Join Table that coresponds to the many-to-many relationship that the
 first two tables have, meaning which workers run which errands. The user can create, delete and update a Worker and can also
-ask from the DB all the Workers.
-![search form 1](<Yugioh_MVC/Images/Form_1.png>)
+ask from the DB all the Workers:
+![workers actions](<REST_API_Project/Images/WorkersActions.png>)
+
+The same actions can be done for the Errands table:
+![errands actions](<REST_API_Project/Images/ErrandsActions.png>)
+
+The user also can create relations between a Worker and an Errand by adding their respective ids to the third DB table (Join Table).
+The user can ask all or a specified relationship and can delete a relationship between a worker and an errand from the DB:
+![errands actions](<REST_API_Project/Images/ErrandWorkersActions.png>)
 
 ## Technical Information
 The project contains all the logic of an API that manages a DB. This means that it uses Models (classes) that corespond to the tables
