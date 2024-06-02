@@ -25,11 +25,11 @@ namespace REST_API_Project.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ErrandWorkerDTO>>> GetErrandWorkers()
         {
-            return await _context.ErrandWorkers.Select(ew => ErrandWorker_To_ErrandWorkerDTO(ew)).ToListAsync();
+            return await _context.ErrandWorkers.Select(ew => ErrandWorkerToErrandWorkerDto(ew)).ToListAsync();
         }
 
         // GET: api/ErrandWorkers/5
-        [HttpGet("{errandid}&{workerid}")]
+        [HttpGet("{errandid}/{workerid}")]
         public async Task<ActionResult<ErrandWorkerDTO>> GetErrandWorker(int errandid, int workerid)
         {
             var errandWorker = await _context.ErrandWorkers
@@ -41,7 +41,7 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
-            return ErrandWorker_To_ErrandWorkerDTO(errandWorker);
+            return ErrandWorkerToErrandWorkerDto(errandWorker);
         }
 
         // POST: api/ErrandWorkers
@@ -58,7 +58,7 @@ namespace REST_API_Project.Controllers
             }
 
             // ErrandWorkerDTO to ErrandWorker
-            _context.ErrandWorkers.Add(ErrandWorkerDTO_To_ErrandWorker(errandWorkerDTO));
+            _context.ErrandWorkers.Add(ErrandWorkerDtoToErrandWorker(errandWorkerDTO));
 
             try
             {
@@ -82,7 +82,7 @@ namespace REST_API_Project.Controllers
         }
 
         // DELETE: api/ErrandWorkers/5&4
-        [HttpDelete("{errandid}&{workerid}")]
+        [HttpDelete("{errandid}/{workerid}")]
         public async Task<IActionResult> DeleteErrandWorker(int errandid, int workerid)
         {
             var errandWorker = await _context.ErrandWorkers
@@ -105,13 +105,13 @@ namespace REST_API_Project.Controllers
             return _context.ErrandWorkers.Any(ew => ew.ErrandId == errandWorkerDTO.ErrandId && ew.WorkerId == errandWorkerDTO.WorkerId);
         }
 
-        private static ErrandWorker ErrandWorkerDTO_To_ErrandWorker(ErrandWorkerDTO errandWorkerDTO) => new()
+        private static ErrandWorker ErrandWorkerDtoToErrandWorker(ErrandWorkerDTO errandWorkerDTO) => new()
         {
             ErrandId = errandWorkerDTO.ErrandId,
             WorkerId = errandWorkerDTO.WorkerId
         };
 
-        private static ErrandWorkerDTO ErrandWorker_To_ErrandWorkerDTO(ErrandWorker errandWorker) => new()
+        private static ErrandWorkerDTO ErrandWorkerToErrandWorkerDto(ErrandWorker errandWorker) => new()
         {
             ErrandId = errandWorker.ErrandId,
             WorkerId = errandWorker.WorkerId

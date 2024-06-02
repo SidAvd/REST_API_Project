@@ -26,7 +26,7 @@ namespace REST_API_Project.Controllers
         public async Task<ActionResult<IEnumerable<WorkerDTO>>> GetWorkers()
         {
             return await _context.Workers
-                .Select(worker => Worker_To_WorkerDTO(worker))
+                .Select(worker => WorkerToWorkerDto(worker))
                 .ToListAsync();
         }
 
@@ -41,7 +41,7 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
-            return Worker_To_WorkerDTO(worker);
+            return WorkerToWorkerDto(worker);
         }
 
         // PUT: api/Workers/5
@@ -87,14 +87,14 @@ namespace REST_API_Project.Controllers
         [HttpPost]
         public async Task<ActionResult<WorkerDTO>> PostWorker(WorkerDTO workerDTO)
         {
-            var worker = WorkerDTO_To_Worker(workerDTO);
+            var worker = WorkerDtoToWorker(workerDTO);
 
             _context.Workers.Add(worker);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetWorker), 
                 new { id = worker.Id },
-                Worker_To_WorkerDTO(worker));
+                WorkerToWorkerDto(worker));
         }
 
         // DELETE: api/Workers/5
@@ -118,14 +118,14 @@ namespace REST_API_Project.Controllers
             return _context.Workers.Any(e => e.Id == id);
         }
 
-        private static WorkerDTO Worker_To_WorkerDTO(Worker worker) => new()
+        private static WorkerDTO WorkerToWorkerDto(Worker worker) => new()
         {
             Id = worker.Id,
             Name = worker.Name,
             HireDate = worker.HireDate
         };
 
-        private static Worker WorkerDTO_To_Worker(WorkerDTO workerDTO) => new()
+        private static Worker WorkerDtoToWorker(WorkerDTO workerDTO) => new()
         {
             Id = workerDTO.Id,
             Name = workerDTO.Name,

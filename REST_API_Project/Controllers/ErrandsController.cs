@@ -26,7 +26,7 @@ namespace REST_API_Project.Controllers
         public async Task<ActionResult<IEnumerable<ErrandDTO>>> GetErrands()
         {
             return await _context.Errands
-                .Select(errand => Errand_To_ErrandDTO(errand))
+                .Select(errand => ErrandToErrandDto(errand))
                 .ToListAsync();
         }
 
@@ -41,7 +41,7 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
-            return Errand_To_ErrandDTO(errand);
+            return ErrandToErrandDto(errand);
         }
 
         // PUT: api/Errands/5
@@ -88,14 +88,14 @@ namespace REST_API_Project.Controllers
         [HttpPost]
         public async Task<ActionResult<ErrandDTO>> PostErrand(ErrandDTO errandDTO)
         {
-            var errand = ErrandDTO_To_Errand(errandDTO);
+            var errand = ErrandDtoToErrand(errandDTO);
 
             _context.Errands.Add(errand);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetErrand),
                 new { id = errand.Id },
-                Errand_To_ErrandDTO(errand));           // Use of method -> shows id created from DB
+                ErrandToErrandDto(errand));           // Use of method -> shows id created from DB
         }
 
         // DELETE: api/Errands/5
@@ -119,7 +119,7 @@ namespace REST_API_Project.Controllers
             return _context.Errands.Any(e => e.Id == id);
         }
 
-        private static ErrandDTO Errand_To_ErrandDTO(Errand errand) => new()
+        private static ErrandDTO ErrandToErrandDto(Errand errand) => new()
         {
             Id = errand.Id,
             Name = errand.Name,
@@ -127,7 +127,7 @@ namespace REST_API_Project.Controllers
             Description = errand.Description
         };
 
-        private static Errand ErrandDTO_To_Errand(ErrandDTO errandDTO) => new()
+        private static Errand ErrandDtoToErrand(ErrandDTO errandDTO) => new()
         {
             Id = errandDTO.Id,
             Name = errandDTO.Name,
