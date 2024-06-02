@@ -108,6 +108,12 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
+            // If the errand is related to at least one worker, it cannot be deleted
+            if (_context.ErrandWorkers.Any(ew => ew.ErrandId == id))
+            {
+                return BadRequest();
+            }
+
             _context.Errands.Remove(errand);
             await _context.SaveChangesAsync();
 

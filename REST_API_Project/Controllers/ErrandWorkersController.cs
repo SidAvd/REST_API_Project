@@ -94,6 +94,8 @@ namespace REST_API_Project.Controllers
                 return NotFound();
             }
 
+
+
             _context.ErrandWorkers.Remove(errandWorker);
             await _context.SaveChangesAsync();
 
